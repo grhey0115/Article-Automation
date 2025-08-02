@@ -15,7 +15,6 @@ import { InteractiveArticleForm } from '@/components/forms/interactive-article-f
 import { ArticlePreviewEditor } from '@/components/article-preview-editor';
 import { Walkthrough } from '@/components/walkthrough';
 import { HelpButton } from '@/components/help-button';
-import { QuickStartGuide } from '@/components/quick-start-guide';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('interactive')
@@ -29,15 +28,8 @@ export default function HomePage() {
     category: ''
   })
   const [showWalkthrough, setShowWalkthrough] = useState(false)
-  const [showQuickStart, setShowQuickStart] = useState(false) // Will be set based on localStorage
 
-  // Check if user has completed walkthrough before
-  useEffect(() => {
-    const walkthroughCompleted = localStorage.getItem('walkthroughCompleted')
-    if (!walkthroughCompleted) {
-      setShowQuickStart(true)
-    }
-  }, [])
+  
 
   // Fetch configuration status
   const { data: config } = useQuery({
@@ -57,16 +49,6 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
       {/* Help Button */}
       <HelpButton onStartWalkthrough={() => setShowWalkthrough(true)} />
-      
-      {/* Quick Start Guide */}
-      <QuickStartGuide 
-        isVisible={showQuickStart}
-        onClose={() => setShowQuickStart(false)}
-        onStartWalkthrough={() => {
-          setShowQuickStart(false)
-          setShowWalkthrough(true)
-        }}
-      />
       
       {/* Walkthrough */}
       <Walkthrough 
