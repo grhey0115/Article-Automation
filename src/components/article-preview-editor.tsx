@@ -65,6 +65,11 @@ export function ArticlePreviewEditor({
   const [fontSize, setFontSize] = useState(14)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  // Calculate progress percentage
+  const calculateProgress = (current: number, total: number): number => {
+    return Math.min(100, Math.round((current / total) * 100));
+  };
+
   // Update edited content when currentContent changes
   useEffect(() => {
     setEditedContent(currentContent)
@@ -361,10 +366,30 @@ export function ArticlePreviewEditor({
             </div>
             {isGenerating && (
               <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
-                Generating Part {currentPart}/{totalParts}
+                Generating Part {currentPart}/{totalParts} ({calculateProgress(currentPart, totalParts)}%)
               </Badge>
             )}
           </div>
+          
+          {/* Generation Progress Bar */}
+          {isGenerating && (
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-slate-700">Generation Progress</span>
+                <span className="text-sm font-bold text-blue-600">{calculateProgress(currentPart, totalParts)}%</span>
+              </div>
+              <div className="w-full bg-slate-200 rounded-full h-3">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${calculateProgress(currentPart, totalParts)}%` }}
+                ></div>
+              </div>
+              <div className="flex justify-between text-xs text-slate-500 mt-1">
+                <span>Part 1</span>
+                <span>Part {totalParts}</span>
+              </div>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {isEditing ? (
@@ -567,7 +592,7 @@ export function ArticlePreviewEditor({
             </div>
             <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
               <span className="text-slate-600">Current parts:</span>
-              <span className="font-semibold text-slate-900">{currentPart} of {totalParts}</span>
+              <span className="font-semibold text-slate-900">{currentPart} of {totalParts} ({calculateProgress(currentPart, totalParts)}%)</span>
             </div>
             <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
               <span className="text-slate-600">Status:</span>
@@ -575,6 +600,12 @@ export function ArticlePreviewEditor({
                 {isGenerating ? "Generating" : "Ready"}
               </Badge>
             </div>
+            {!isGenerating && currentPart === totalParts && (
+              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
+                <span className="text-green-700">Generation complete:</span>
+                <span className="font-semibold text-green-700">100%</span>
+              </div>
+            )}
           </div>
                  </CardContent>
        </Card>
